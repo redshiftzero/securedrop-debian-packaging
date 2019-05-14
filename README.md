@@ -38,8 +38,7 @@ Summarizing release manager steps:
 4. Make any changes as necessary and create a PR with the modifications from steps 1-4
 5. Push the release tag for use in building
 
-This means that the `requirements.txt` files will be updated by release managers,
-not developers. Developers should update `Pipfile.lock`.
+This means that the `build-requirements.txt` files will be updated by release managers, not developers. Developers should update `requirements.in` and `dev-requirements.in`.
 
 ## Build a package
 

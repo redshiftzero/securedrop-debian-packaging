@@ -37,21 +37,14 @@ def main():
 
     defaults = data["default"]
     with tempfile.TemporaryDirectory() as tmpdir:
-        newreq_path = os.path.join(tmpdir, "requirements.txt")
-        # First let us create the requirements.txt file with hashes
-        # from Pipfile.lock, these hashes are from upstream PyPI.
+        newreq_path = os.path.join(tmpdir, "build-requirements.txt")
 
-        with open(newreq_path, "w") as fobj:
-            for name in defaults:
-                if name in ["pyqt5", "sip"]:  #  These will come from Debian
-                    continue
-                package_name = "{}{}".format(name, defaults[name]["version"])
-                hashes = " ".join(["--hash={}".format(value) for value in defaults[name]["hashes"]])
-                fobj.write("{} {}\n".format(package_name,hashes))
+        # TODO: consider pruning the wheels from the build requirements at
+        # this stage. They are from upstream (PSF) PyPI.
 
         # The --require-hashes option will be used by default if there are
-        # hashes in the requirements.txt file. We specify it anyway to guard
-        # against use of a requirements.txt file without hashes.
+        # hashes in the build-requirements.txt file. We specify it anyway to guard
+        # against use of a build-requirements.txt file without hashes.
         cmd = [
             "pip3",
             "download",
@@ -85,7 +78,7 @@ def main():
         cachenames = os.listdir(args.cache)
 
         for name in names:
-            if name == "requirements.txt":  # We don't need this in cache
+            if name == "build-requirements.txt":  # We don't need this in cache
                 continue
             if name in cachenames:  # Means all ready in our cache
                 continue

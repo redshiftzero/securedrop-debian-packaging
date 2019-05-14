@@ -4,7 +4,7 @@ import os
 import sys
 
 if len(sys.argv) != 3:
-    print("Usage: ./scripts/verify-hashes sha256sums.txt requirements.txt")
+    print("Usage: ./scripts/verify-hashes sha256sums.txt build-requirements.txt")
     sys.exit(1)
 
 # This is the already gpg signed and verified data
@@ -22,7 +22,7 @@ for line in data:
     sha256sum_data[words[0]] = True
 
 
-# Now read the requirements.txt file
+# Now read the build-requirements.txt file
 lines = []
 with open(sys.argv[2]) as fobj:
     lines = fobj.readlines()

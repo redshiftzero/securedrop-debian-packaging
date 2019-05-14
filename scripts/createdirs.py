@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# To create the project directory structure from a given requirements.txt file
-# Usage: ./scripts/createdirs.py ~/projects/myproject/requirements.txt
+# To create the project directory structure from a given build-requirements.txt file
+# Usage: ./scripts/createdirs.py ~/projects/myproject/build-requirements.txt
 
 import os
 import sys
@@ -9,7 +9,7 @@ import json
 import shutil
 
 if len(sys.argv) != 2:
-    print("Missing path to the requirements.txt.")
+    print("Missing path to the build-requirements.txt.")
     sys.exit(1)
 
 DATA = open("./templates/project-index.html").read()

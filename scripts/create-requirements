@@ -14,5 +14,8 @@ fi
 
 cd $PKG_DIR
 
-# Now create both of the files
-pipenv lock -r > requirements.txt
+# Now create a copy of the requirements.txt file so we can
+# replace the hashes (which points to the source tarballs and wheels
+# from PSF's PyPI) with build-requirements.txt which will (eventually)
+# contain hashes pointing to the wheels on FPF's PyPI.
+cp requirements.txt build-requirements.txt
