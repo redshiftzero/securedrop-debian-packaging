@@ -1,0 +1,40 @@
+version: 2.1
+jobs:
+  build-securedrop-client:
+    docker:
+      - image: circleci/python:3.5
+    steps:
+      - checkout
+      - run: 
+          name: Install Debian packaging dependencies
+          command: make install-deps
+
+      - run:
+          name: Download wheels and sources
+          command: make fetch-wheels
+
+      - run:
+          name: Clone the repository to be packaged
+          command: |
+            mkdir ~/packaging
+            cd ~/packaging
+            git clone https://github.com/freedomofpress/securedrop-client.git
+
+      - run:
+          name: Get latest tag for the project to be packaged
+          command: |
+            cd ~/packaging/securedrop-client
+            LATEST_TAG="$(git describe --tags $(git rev-list --tags --max-count=1))" export $LATEST_TAG >> $BASH_ENV
+            git checkout $LATEST_TAG
+            python3 setup.py sdist
+            ls dist/
+
+      - run:
+          name: Build securedrop-client debian package
+          command: |
+            PKG_PATH=~/packaging/securedrop-client/dist/securedrop-client-$LATEST_TAG.tar.gz PKG_VERSION=$LATEST_TAG make securedrop-client
+
+workflows:
+  build-debian-packages:
+    jobs:
+      - build-securedrop-client
