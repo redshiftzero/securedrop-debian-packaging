@@ -1,7 +1,53 @@
 version: 2
 jobs:
-  build:
+  make-install-deps:
     docker:
-      - image: circleci/python:3.5
+      - image: circleci/python:3.5-stretch
     steps:
       - checkout
+      - run: 
+          name: make install-deps
+          command: make install-deps
+
+      - run:
+          name: make fetch-wheels
+          command: make fetch-wheels
+
+  build-securedrop-client:
+    docker:
+      - image: circleci/python:3.5-stretch
+    steps:
+      - checkout
+
+  build-securedrop-proxy:
+    docker:
+      - image: circleci/python:3.5-stretch
+    steps:
+      - checkout
+
+      - run:
+          name: Clone the repository to be packaged
+          command: |
+            mkdir ~/testproject
+            cd ~/testproject
+            git clone https://github.com/freedomofpress/securedrop-proxy.git
+
+      - run:
+          name: Get latest tag
+          command: |
+            cd ~/testproject/securedrop-proxy
+            'export TAG="$(git describe --tags $(git rev-list --tags --max-count=1))"' >> $BASH_ENV
+            git checkout $TAG
+            python3 setup.py sdist
+
+      - run:
+          name: Build the package
+          command: |
+            PKG_PATH=~/testproject/securedrop-proxy/ PKG_VERSION=0.x.y make securedrop-proxy
+
+workflows:
+  build-debian-packages:
+    jobs:
+      - make-install-deps
+      - build-securedrop-client
+      - build-securedrop-proxy
