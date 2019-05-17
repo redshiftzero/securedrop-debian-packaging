@@ -15,4 +15,4 @@ fi
 cd $PKG_DIR
 
 # Now create both of the files
-pipenv lock -r > requirements.txt
+cp build-requirements.txt requirements.txt
