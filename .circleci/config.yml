@@ -34,13 +34,11 @@ jobs:
       - run:
           name: Build securedrop-client debian package
           command: |
-            #source $BASH_ENV  # so that we can reuse env vars from previous run steps
             export PKG_PATH=~/packaging/securedrop-client/dist/securedrop-client-$LATEST_TAG.tar.gz
             export PKG_VERSION=$LATEST_TAG
             export PKG_NAME="securedrop-client"
             ./scripts/build-debianpackage
-            # Print package name
-            ls ~/debbuild/packaging/securedrop-client/*deb
+            ls ~/debbuild/packaging/securedrop-client/
 
 workflows:
   build-debian-packages:
