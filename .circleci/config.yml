@@ -20,7 +20,7 @@ jobs:
             git clone https://github.com/freedomofpress/securedrop-client.git
 
       - run:
-          name: Get latest tag for the project to be packaged
+          name: Get latest tag for the project and make a source tarball
           command: |
             cd ~/packaging/securedrop-client
             export LATEST_TAG="$(git describe --tags $(git rev-list --tags --max-count=1))"
@@ -30,16 +30,17 @@ jobs:
             # Create tarball
             git checkout $LATEST_TAG
             python3 setup.py sdist
-            ls dist/
 
       - run:
           name: Build securedrop-client debian package
           command: |
-            source $BASH_ENV  # so that we can reuse env vars from previous run steps
+            #source $BASH_ENV  # so that we can reuse env vars from previous run steps
             export PKG_PATH=~/packaging/securedrop-client/dist/securedrop-client-$LATEST_TAG.tar.gz
             export PKG_VERSION=$LATEST_TAG
             export PKG_NAME="securedrop-client"
             ./scripts/build-debianpackage
+            # Print package name
+            ls ~/debbuild/packaging/securedrop-client/*deb
 
 workflows:
   build-debian-packages:
