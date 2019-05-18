@@ -32,7 +32,10 @@ jobs:
       - run:
           name: Build securedrop-client debian package
           command: |
-            PKG_PATH=~/packaging/securedrop-client/dist/securedrop-client-$LATEST_TAG.tar.gz PKG_VERSION=$LATEST_TAG make securedrop-client
+            export PKG_PATH=~/packaging/securedrop-client/dist/securedrop-client-$LATEST_TAG.tar.gz
+            export PKG_VERSION=$LATEST_TAG
+            export PKG_NAME="securedrop-client"
+            ./scripts/build-debianpackage
 
 workflows:
   build-debian-packages:
