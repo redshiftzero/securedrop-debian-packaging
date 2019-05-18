@@ -16,15 +16,18 @@ jobs:
       - run:
           name: Clone the repository to be packaged
           command: |
-            mkdir ~/packaging
-            cd ~/packaging
+            mkdir ~/packaging && cd ~/packaging
             git clone https://github.com/freedomofpress/securedrop-client.git
 
       - run:
           name: Get latest tag for the project to be packaged
           command: |
             cd ~/packaging/securedrop-client
-            LATEST_TAG="$(git describe --tags $(git rev-list --tags --max-count=1))" export $LATEST_TAG >> $BASH_ENV
+            export LATEST_TAG="$(git describe --tags $(git rev-list --tags --max-count=1))"
+            # Enable access to this env var in subsequent run steps
+            echo $LATEST_TAG > ~/packaging/sd_client_version
+            echo 'export LATEST_TAG=$(cat ~/packaging/sd_client_version)' >> $BASH_ENV
+            # Create tarball
             git checkout $LATEST_TAG
             python3 setup.py sdist
             ls dist/
@@ -32,6 +35,7 @@ jobs:
       - run:
           name: Build securedrop-client debian package
           command: |
+            source $BASH_ENV  # so that we can reuse env vars from previous run steps
             export PKG_PATH=~/packaging/securedrop-client/dist/securedrop-client-$LATEST_TAG.tar.gz
             export PKG_VERSION=$LATEST_TAG
             export PKG_NAME="securedrop-client"
